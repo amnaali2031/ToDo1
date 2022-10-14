@@ -110,9 +110,9 @@ namespace ToDo_MainProject.Model
                     .HasConstraintName("FK_User_User");
             });
 
-            modelBuilder.Entity<Item>().HasQueryFilter(a => a.Archived==0 || IgnoreFilter);
-            modelBuilder.Entity<User>().HasQueryFilter(a => a.Archived==0 || IgnoreFilter);
-            modelBuilder.Entity<Item>().HasQueryFilter(a => a.IsReadData == 0 || IgnoreFilter);
+            //modelBuilder.Entity<Item>().HasQueryFilter(a => a.Archived== 0 || IgnoreFilter);
+            modelBuilder.Entity<User>().HasQueryFilter(a => a.Archived== 0 || IgnoreFilter);
+            modelBuilder.Entity<Item>().HasQueryFilter(a => a.Archived == 0 && a.IsReadData == 0 && IgnoreFilter);
 
             OnModelCreatingPartial(modelBuilder);
         }
