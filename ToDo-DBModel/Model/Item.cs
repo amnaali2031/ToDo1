@@ -21,5 +21,10 @@ namespace ToDo_MainProject.Model
         public int UserId { get; set; }
 
         public virtual User User { get; set; }
+
+        public object ToList()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

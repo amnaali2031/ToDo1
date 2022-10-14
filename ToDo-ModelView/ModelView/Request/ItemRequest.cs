@@ -13,6 +13,8 @@ namespace ToDo_ModelView.ModelView.Request
         public string Title { get; set; }
         public string Content { get; set; }
         public string ImageString { get; set; }
+        public int UserId { get; set; }
         public string Image { get; set; }
+
     }
 }

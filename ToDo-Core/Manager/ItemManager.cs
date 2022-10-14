@@ -180,24 +180,28 @@ namespace ToDo_Core.Manager
             return _mapper.Map<ItemModelView>(item);
         }
 
-        public void AssignItem(UserModel currentUser, int UserId, int ItemId)
+        public ItemModelView AssignItem(UserModel currentUser, ItemRequest request)
         {
+            Item item = null;
+
+
             if (currentUser.IsAdmin == 0)
             {
-                throw new ServiceValidationException("You don't have permission to Assign Items");
+                throw new ServiceValidationException("You don't have permission to add or update blog");
             }
 
-            var user = _DB.Users
-                                .FirstOrDefault(a => a.Id == UserId)
-                                ?? throw new ServiceValidationException("Invalid User id received");
+            
+                item = _DB.Items
+                                .FirstOrDefault(a => a.Id == request.Id)
+                                 ?? throw new ServiceValidationException("Invalid Item id received");
+
+                item.Title = request.Title;
+                item.Content = request.Content;
+                item.UserId = request.UserId;
 
 
-            var item = _DB.Items
-                                .FirstOrDefault(a => a.Id == ItemId)
-                                ?? throw new ServiceValidationException("Invalid Item id received");
-
-            user.Items.Add(item);
             _DB.SaveChanges();
+            return _mapper.Map<ItemModelView>(item);
 
         }
 

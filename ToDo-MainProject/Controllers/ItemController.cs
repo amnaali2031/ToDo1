@@ -66,9 +66,9 @@ namespace ToDo_MainProject.Controllers
         [HttpPut]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ToDoAuthrize()]
-        public IActionResult AssignItem(int UserId , int ItemId)
+        public IActionResult AssignItem(ItemRequest request)
         {
-             _itemManager.AssignItem(LoggedInUser, UserId , ItemId);
+            _itemManager.AssignItem(LoggedInUser, request);
             return Ok();
         }
     }
