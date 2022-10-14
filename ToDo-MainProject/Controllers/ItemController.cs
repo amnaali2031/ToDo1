@@ -25,10 +25,10 @@ namespace ToDo_MainProject.Controllers
 
         [Route("api/Items")]
         [HttpGet]
-        public IActionResult GetItems(bool IgnoreFilter, int page = 1, int pageSize = 5, string sortColumn = "", string sortDirection = "ascending", string searchText = "")
+        public IActionResult GetItems(bool IsReadData, int page = 1, int pageSize = 5, string sortColumn = "", string sortDirection = "ascending", string searchText = "")
         {
 
-            var result = _itemManager.GetItems(LoggedInUser,IgnoreFilter, page, pageSize, sortColumn, sortDirection, searchText);
+            var result = _itemManager.GetItems(LoggedInUser, IsReadData, page, pageSize, sortColumn, sortDirection, searchText);
             return Ok(result);
         }
 

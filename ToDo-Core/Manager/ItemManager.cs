@@ -45,9 +45,11 @@ namespace ToDo_Core.Manager
             public ItemResponse GetItems(UserModel currentUser,bool IsReadDataFilter, int page = 1, int pageSize = 10, string sortColumn = "", string sortDirection = "ascending", string searchText = "")
             {
                 _DB.IgnoreFilter = IsReadDataFilter;
+                var x = IsReadDataFilter?1:0;
 
                 var queryRes = _DB.Items
-                                        .Where(a => string.IsNullOrWhiteSpace(searchText)
+                                        .Where(a => (a.IsReadData != x) &&
+                                                    string.IsNullOrWhiteSpace(searchText)
                                                     || (a.Title.Contains(searchText)
                                                     || a.Content.Contains(searchText)));
 
