@@ -48,10 +48,9 @@ namespace ToDo_Core.Manager
                 var x = IsReadDataFilter?1:0;
 
                 var queryRes = _DB.Items
-                                        .Where(a => (a.IsReadData != x) &&
-                                                    string.IsNullOrWhiteSpace(searchText)
+                                        .Where(a => (a.IsReadData == x) &&(string.IsNullOrWhiteSpace(searchText)
                                                     || (a.Title.Contains(searchText)
-                                                    || a.Content.Contains(searchText)));
+                                                    || a.Content.Contains(searchText))));
 
                 if (!string.IsNullOrWhiteSpace(sortColumn) && sortDirection.Equals("ascending", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -74,7 +73,7 @@ namespace ToDo_Core.Manager
 
                     
                         var items = _DB.Items
-                                            .Where(a => a.UserId == currentUser.Id).ToList();
+                                            .Where(a => (a.UserId == currentUser.Id)&& (a.IsReadData == x)).ToList();
                         res.Data = items;
 
                         var Item1 = _mapper.Map<PagedResult<ItemModelView>>(res);
