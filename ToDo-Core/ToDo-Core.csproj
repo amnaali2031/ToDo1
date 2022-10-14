@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>ToDo_Core</RootNamespace>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="11.0.1" />
+		<PackageReference Include="CsvHelper" Version="28.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.17" />
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+		<ProjectReference Include="..\ToDo-Common\ToDo-Common.csproj" />
+		<ProjectReference Include="..\ToDo-DBModel\ToDo-DBModel.csproj" />
+		<ProjectReference Include="..\ToDo-ModelView\ToDo-ModelView.csproj" />
+	</ItemGroup>
+
+</Project>
