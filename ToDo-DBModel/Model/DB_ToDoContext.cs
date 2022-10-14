@@ -38,8 +38,7 @@ namespace ToDo_MainProject.Model
 
             modelBuilder.Entity<Item>(entity =>
             {
-                entity.ToTable("Item").HasKey("Id");
-
+                entity.ToTable("Item");
 
                 entity.Property(e => e.Content).HasMaxLength(255);
 
@@ -112,7 +111,7 @@ namespace ToDo_MainProject.Model
 
             //modelBuilder.Entity<Item>().HasQueryFilter(a => a.Archived== 0 || IgnoreFilter);
             modelBuilder.Entity<User>().HasQueryFilter(a => a.Archived== 0 || IgnoreFilter);
-            modelBuilder.Entity<Item>().HasQueryFilter(a => a.Archived == 0 && a.IsReadData == 0 && IgnoreFilter);
+            modelBuilder.Entity<Item>().HasQueryFilter(a => a.Archived == 0 || a.IsReadData == 1 || IgnoreFilter);
 
             OnModelCreatingPartial(modelBuilder);
         }

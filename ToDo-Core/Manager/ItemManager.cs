@@ -157,9 +157,12 @@ namespace ToDo_Core.Manager
                                 .FirstOrDefault(a => a.Id == request.Id)
                                  ?? throw new ServiceValidationException("Invalid Item id received");
 
+                
                 item.Title = request.Title;
                 item.Content = request.Content;
                 item.Image = Imageurl;
+                item.UserId = request.UserId;
+                
 
             }
             else
@@ -168,7 +171,7 @@ namespace ToDo_Core.Manager
                 {
                     Title = request.Title,
                     Content = request.Content,
-                    UserId = currentUser.Id,
+                    UserId = request.UserId,
                     Image = Imageurl
 
                 }).Entity;
@@ -180,28 +183,28 @@ namespace ToDo_Core.Manager
             return _mapper.Map<ItemModelView>(item);
         }
 
-        public ItemModelView AssignItem(UserModel currentUser, ItemRequest request)
+        public ItemModelView AssignItem(UserModel currentUser, ItemAssignRequest request)
         {
-            Item item = null;
 
-
+           
             if (currentUser.IsAdmin == 0)
             {
                 throw new ServiceValidationException("You don't have permission to add or update blog");
             }
 
-            
-                item = _DB.Items
-                                .FirstOrDefault(a => a.Id == request.Id)
-                                 ?? throw new ServiceValidationException("Invalid Item id received");
 
-                item.Title = request.Title;
-                item.Content = request.Content;
-                item.UserId = request.UserId;
+            var res = _DB.Items
+                                .Include("User")
+                                .FirstOrDefault(a => a.Id == request.ItemId)
+                                 ?? throw new ServiceValidationException("Invalid ToDoItem id received");
 
+
+            res.UserId = request.UserId;
+            _DB.Items.Update(res);
 
             _DB.SaveChanges();
-            return _mapper.Map<ItemModelView>(item);
+            return _mapper.Map<ItemModelView>(res);
+
 
         }
 

@@ -18,7 +18,7 @@ namespace ToDo_Core.Manager.Interface
 
         void ArchiveItem(UserModel currentUser, int id);
 
-        ItemModelView AssignItem(UserModel currentUser, ItemRequest request);
+        ItemModelView AssignItem(UserModel currentUser, ItemAssignRequest request);
 
     }
 }
