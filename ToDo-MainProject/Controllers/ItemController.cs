@@ -28,7 +28,7 @@ namespace ToDo_MainProject.Controllers
         public IActionResult GetItems(bool IgnoreFilter, int page = 1, int pageSize = 5, string sortColumn = "", string sortDirection = "ascending", string searchText = "")
         {
 
-            var result = _itemManager.GetItems(IgnoreFilter, page, pageSize, sortColumn, sortDirection, searchText);
+            var result = _itemManager.GetItems(LoggedInUser,IgnoreFilter, page, pageSize, sortColumn, sortDirection, searchText);
             return Ok(result);
         }
 
@@ -59,6 +59,17 @@ namespace ToDo_MainProject.Controllers
         {
             var result = _itemManager.PutItem(LoggedInUser, itemRequest);
             return Ok(result);
+        }
+
+
+        [Route("api/Admin/Assign")]
+        [HttpPut]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [ToDoAuthrize()]
+        public IActionResult AssignItem(int UserId , int ItemId)
+        {
+             _itemManager.AssignItem(LoggedInUser, UserId , ItemId);
+            return Ok();
         }
     }
 }

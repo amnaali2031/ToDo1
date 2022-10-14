@@ -36,13 +36,13 @@ namespace ToDo_Core.Manager
                 }
 
                 var data = _DB.Items
-                                        .FirstOrDefault(a => a.Id == id)
-                                        ?? throw new ServiceValidationException("Invalid ToDoItem id received");
+                                    .FirstOrDefault(a => a.Id == id)
+                                     ?? throw new ServiceValidationException("Invalid ToDoItem id received");
                 data.Archived = 1;
                 _DB.SaveChanges();
             }
 
-            public ItemResponse GetItems(bool IsReadDataFilter, int page = 1, int pageSize = 10, string sortColumn = "", string sortDirection = "ascending", string searchText = "")
+            public ItemResponse GetItems(UserModel currentUser,bool IsReadDataFilter, int page = 1, int pageSize = 10, string sortColumn = "", string sortDirection = "ascending", string searchText = "")
             {
                 _DB.IgnoreFilter = IsReadDataFilter;
 
@@ -62,15 +62,43 @@ namespace ToDo_Core.Manager
 
                 var res = queryRes.GetPaged(page, pageSize);
 
-                var userIds = res.Data
-                                 .Select(a => a.UserId)
-                                 .Distinct()
-                                 .ToList();
+                if (currentUser.IsAdmin == 0)
+                {
+                        var user = _DB.Users.
+                                             Where(a => a.Id == currentUser.Id)
+                                             .ToDictionary(a => a.Id, x => _mapper.Map<UserResult>(x))
+                                             ?? throw new ServiceValidationException("un Authoriza ");    
 
-                var users = _DB.Users
-                                     .Where(a => userIds.Contains(a.Id))
-                                     .ToDictionary(a => a.Id, x => _mapper.Map<UserResult>(x));
 
+                    
+                        var items = _DB.Items
+                                            .Where(a => a.UserId == currentUser.Id).ToList();
+                        res.Data = items;
+
+                        var Item1 = _mapper.Map<PagedResult<ItemModelView>>(res);
+
+                        var dataa = new ItemResponse
+                        {
+                            Item = _mapper.Map<PagedResult<ItemModelView>>(res),
+                            User = user
+                        };
+
+                        dataa.Item.Sortable.Add("Title", "Title");
+                        dataa.Item.Sortable.Add("CreatedDate", "Created Date");
+
+                        return dataa;
+            }
+
+
+                        var userIds = res.Data
+                                         .Select(a => a.UserId)
+                                         .Distinct()
+                                         .ToList();
+
+                        var users = _DB.Users
+                                             .Where(a => userIds.Contains(a.Id))
+                                             .ToDictionary(a => a.Id, x => _mapper.Map<UserResult>(x));
+                     
                 var data = new ItemResponse
                 {
                     Item = _mapper.Map<PagedResult<ItemModelView>>(res),
@@ -127,7 +155,7 @@ namespace ToDo_Core.Manager
             {
                 item = _DB.Items
                                 .FirstOrDefault(a => a.Id == request.Id)
-                                 ?? throw new ServiceValidationException("Invalid blog id received");
+                                 ?? throw new ServiceValidationException("Invalid Item id received");
 
                 item.Title = request.Title;
                 item.Content = request.Content;
@@ -151,7 +179,28 @@ namespace ToDo_Core.Manager
             _DB.SaveChanges();
             return _mapper.Map<ItemModelView>(item);
         }
-       
+
+        public void AssignItem(UserModel currentUser, int UserId, int ItemId)
+        {
+            if (currentUser.IsAdmin == 0)
+            {
+                throw new ServiceValidationException("You don't have permission to Assign Items");
+            }
+
+            var user = _DB.Users
+                                .FirstOrDefault(a => a.Id == UserId)
+                                ?? throw new ServiceValidationException("Invalid User id received");
+
+
+            var item = _DB.Items
+                                .FirstOrDefault(a => a.Id == ItemId)
+                                ?? throw new ServiceValidationException("Invalid Item id received");
+
+            user.Items.Add(item);
+            _DB.SaveChanges();
+
+        }
+
         #endregion public
 
     }
