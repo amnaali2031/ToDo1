@@ -21,7 +21,6 @@ namespace ToDo_MainProject.Model
 
         public virtual DbSet<Item> Items { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public bool IsReadDataFilter { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -109,9 +108,8 @@ namespace ToDo_MainProject.Model
                     .HasConstraintName("FK_User_User");
             });
 
-            //modelBuilder.Entity<Item>().HasQueryFilter(a => a.Archived== 0 || IgnoreFilter);
             modelBuilder.Entity<User>().HasQueryFilter(a => a.Archived== 0 || IgnoreFilter);
-            modelBuilder.Entity<Item>().HasQueryFilter(a => a.Archived == 0 || a.IsReadData == 1 || IgnoreFilter);
+            modelBuilder.Entity<Item>().HasQueryFilter(a => a.Archived == 0 || IgnoreFilter);
 
             OnModelCreatingPartial(modelBuilder);
         }

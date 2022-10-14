@@ -42,13 +42,19 @@ namespace ToDo_Core.Manager
                 _DB.SaveChanges();
             }
 
-            public ItemResponse GetItems(UserModel currentUser,bool IsReadDataFilter, int page = 1, int pageSize = 10, string sortColumn = "", string sortDirection = "ascending", string searchText = "")
+            public ItemResponse GetItems(UserModel currentUser,
+                                         bool IsReadDataFilter,
+                                         int page = 1,
+                                         int pageSize = 10,
+                                         string sortColumn = "",
+                                         string sortDirection = "ascending",
+                                         string searchText = "")
             {
-                _DB.IgnoreFilter = IsReadDataFilter;
-                var x = IsReadDataFilter?1:0;
-
+                
+                var x = IsReadDataFilter? 1 : 0;
                 var queryRes = _DB.Items
-                                        .Where(a => (a.IsReadData == x) &&(string.IsNullOrWhiteSpace(searchText)
+                                        .Where(a => (a.IsReadData == x) 
+                                                    &&(string.IsNullOrWhiteSpace(searchText)
                                                     || (a.Title.Contains(searchText)
                                                     || a.Content.Contains(searchText))));
 
@@ -73,7 +79,8 @@ namespace ToDo_Core.Manager
 
                     
                         var items = _DB.Items
-                                            .Where(a => (a.UserId == currentUser.Id)&& (a.IsReadData == x)).ToList();
+                                            .Where(a => (a.UserId == currentUser.Id)
+                                                        && (a.IsReadData == x)).ToList();
                         res.Data = items;
 
                         var Item1 = _mapper.Map<PagedResult<ItemModelView>>(res);
@@ -112,6 +119,7 @@ namespace ToDo_Core.Manager
                 return data;
             }
 
+
             public ItemModelView GetItem(UserModel currentUser, int id)
             {
                 var res = _DB.Items
@@ -128,9 +136,11 @@ namespace ToDo_Core.Manager
                 return _mapper.Map<ItemModelView>(res);
             }
 
+
             public ItemModelView PutItem(UserModel currentUser, ItemRequest request)
         {
             Item item = null;
+            var userId = 0;
 
             var url = "";
             var Imageurl = "";
@@ -146,11 +156,13 @@ namespace ToDo_Core.Manager
                 Imageurl = @$"{baseURL}/api/v1/user/fileretrive/profilepic?filename={url}";
             }
 
-
+            
             if (currentUser.IsAdmin == 0)
             {
+                userId = currentUser.Id;
                 throw new ServiceValidationException("You don't have permission to add or update blog");
             }
+
 
             if (request.Id > 0)
             {
@@ -162,17 +174,18 @@ namespace ToDo_Core.Manager
                 item.Title = request.Title;
                 item.Content = request.Content;
                 item.Image = Imageurl;
-                item.UserId = request.UserId;
+                item.UserId = currentUser.IsAdmin == 1 ? request.UserId : userId;
                 
 
             }
             else
             {
+
                 item = _DB.Items.Add(new Item
                 {
                     Title = request.Title,
                     Content = request.Content,
-                    UserId = request.UserId,
+                    UserId = currentUser.IsAdmin == 1? request.UserId : userId,
                     Image = Imageurl
 
                 }).Entity;

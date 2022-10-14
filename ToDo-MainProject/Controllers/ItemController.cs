@@ -13,10 +13,10 @@ namespace ToDo_MainProject.Controllers
     public class ItemController : ApiBaseController
     {
         private IItemManager _itemManager;
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<ItemController> _logger;
 
 
-        public ItemController(ILogger<UserController> logger,
+        public ItemController(ILogger<ItemController> logger,
                               IItemManager itemManager)
         {
             _logger = logger;
@@ -25,31 +25,43 @@ namespace ToDo_MainProject.Controllers
 
         [Route("api/Items")]
         [HttpGet]
-        public IActionResult GetItems(bool IsReadData, int page = 1, int pageSize = 5, string sortColumn = "", string sortDirection = "ascending", string searchText = "")
+        public IActionResult GetItems(bool IsReadData,
+                                      int page = 1, 
+                                      int pageSize = 5,
+                                      string sortColumn = "",
+                                      string sortDirection = "ascending",
+                                      string searchText = "")
         {
 
-            var result = _itemManager.GetItems(LoggedInUser, IsReadData, page, pageSize, sortColumn, sortDirection, searchText);
+            var result = _itemManager.GetItems(LoggedInUser, 
+                                               IsReadData,
+                                               page, pageSize,
+                                               sortColumn,
+                                               sortDirection,
+                                               searchText);
             return Ok(result);
         }
 
 
         [Route("api/Item/{id}")]
         [HttpGet]
-        public IActionResult GetItem(int id)
+        public IActionResult GetItem(int ItemId)
         {
-            var result = _itemManager.GetItem(LoggedInUser,id);
+            var result = _itemManager.GetItem(LoggedInUser, ItemId);
             return Ok(result);
         }
+
 
         [Route("api/Admin/Item/{id}")]
         [HttpDelete]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ToDoAuthrize()]
-        public IActionResult ArchiveItem(int id)
+        public IActionResult ArchiveItem(int ItemId)
         {
-            _itemManager.ArchiveItem(LoggedInUser, id);
+            _itemManager.ArchiveItem(LoggedInUser, ItemId);
             return Ok();
         }
+
 
         [Route("api/Admin/Item")]
         [HttpPut]
